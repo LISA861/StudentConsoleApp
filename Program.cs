@@ -10,7 +10,7 @@ namespace StudentManager
 {
     internal class Program
     {
-        static string connectionString = "Data Source=DESKTOP-RFHC6TB\\MSSQLSERVER01;Initial Catalog=StudentDB;Integrated Security=True;";
+        //static string connectionString = "Data Source=DESKTOP-RFHC6TB\\MSSQLSERVER01;Initial Catalog=StudentDB;Integrated Security=True;";
 
         static void Main(string[] args)
         {

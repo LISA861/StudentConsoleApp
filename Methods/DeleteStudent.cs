@@ -9,29 +9,27 @@ namespace StudentManager.Methods
 {
     internal class DeleteStudent
     {
-        static string connectionString = "Data Source=DESKTOP-RFHC6TB\\MSSQLSERVER01;Initial Catalog=StudentDB;Integrated Security=True;";
 
         public void deleteStudent()
         {
-            Console.Write("Enter Student ID to delete: ");
-            int id = int.Parse(Console.ReadLine());
-
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (var context = new StudentDBEntities())
             {
-                string query = "DELETE FROM Students WHERE StudentID = @ID";
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@ID", id);
+                Console.Write("Enter Student ID to delete: ");
+                int id = int.Parse(Console.ReadLine());
 
-                con.Open();
-                int rows = cmd.ExecuteNonQuery();
-                con.Close();
+                var student = context.Students.FirstOrDefault(s => s.StudentID == id);
 
-                if (rows > 0)
-                    Console.WriteLine("Student deleted.");
-                else
-                    Console.WriteLine("Student not found.");
+                if (student == null)
+                {
+                    Console.WriteLine("❌ Student not found.");
+                    return;
+                }
+
+                context.Students.Remove(student);
+                context.SaveChanges();
+                Console.WriteLine("✅ Student deleted successfully!");
             }
         }
-
     }
 }
+

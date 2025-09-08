@@ -9,29 +9,31 @@ namespace StudentManager.Methods
 {
     internal class SearchStudentByName
     {
-        static string connectionString = "Data Source=DESKTOP-RFHC6TB\\MSSQLSERVER01;Initial Catalog=StudentDB;Integrated Security=True;";
 
         public void searchStudentByName()
         {
-            Console.Write("Enter student name (partial allowed): ");
-            string name = Console.ReadLine();
-
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (var context = new StudentDBEntities())
             {
-                string query = "SELECT * FROM Students WHERE FirstName LIKE @Name OR LastName LIKE @Name";
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@Name", "%" + name + "%");
+                Console.Write("Enter name to search: ");
+                string name = Console.ReadLine();
 
-                con.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
+                var results = context.Students
+                    .Where(s => s.FirstName.Contains(name) || s.LastName.Contains(name))
+                    .ToList();
 
-                while (reader.Read())
+                if (results.Any())
                 {
-                    Console.WriteLine($"ID: {reader["StudentID"]}, Name: {reader["FirstName"]} {reader["LastName"]}, Age: {reader["Age"]}, Gender: {reader["Gender"]}, Email: {reader["Email"]}");
+                    foreach (var s in results)
+                    {
+                        Console.WriteLine($"{s.StudentID} - {s.FirstName} {s.LastName}");
+                    }
                 }
-                con.Close();
+                else
+                {
+                    Console.WriteLine("❌ No students found with that name.");
+                }
+
             }
         }
-
     }
 }
